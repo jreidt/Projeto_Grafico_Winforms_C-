@@ -1,0 +1,50 @@
+﻿using Grafico_2026_Julio_Eidt.DAO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Grafico_2026_Julio_Eidt.Controller
+{
+    internal class CtrlCargos : Controller
+    {
+        protected DaoCargos oDaoCargos;
+
+        public CtrlCargos()
+        {
+            oDaoCargos = new DaoCargos();
+        }
+
+        public override string Salvar(object obj)
+        {
+            return oDaoCargos.Salvar(obj);
+        }
+
+        public override string CarregarObj(object obj)
+        {
+            return null;
+        }
+
+        public override List<object> CarregarColecao(object obj)
+        {
+            return null;
+        }
+
+        public override List<object> Pesquisar(object obj)
+        {
+            return null;
+        }
+
+        public override string Excluir(object obj)
+        {
+            return oDaoCargos.Excluir(obj);
+        }
+
+        public DaoCargos ODaoCargos
+        {
+            get => oDaoCargos;
+            set => oDaoCargos = value;
+        }
+    }
+}
