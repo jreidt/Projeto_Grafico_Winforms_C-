@@ -34,6 +34,7 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
         {
             this.txtCodigo.Clear();
             this.txtCodigo.Text = "0";
+            this.lblUf.Text = "UF";
             this.lblDatCad.Text = String.Empty;
             this.lblUltAlt.Text = String.Empty;
             this.lblCodUsu.Text = String.Empty;
@@ -90,7 +91,7 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oEstado.OPais.Codigo = Convert.ToInt32(this.txtCodPais.Text);
             oEstado.OPais.Pais   = this.txtPais.Text;
             msg                  = oCtrlEstados.Salvar(oEstado);
-            if (msg != null)
+            if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);
             }
@@ -109,8 +110,20 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
+            string aux = oFrmConPaises.btnSair.Text;
+            oFrmConPaises.btnSair.Text = "&Selecionar";
             oFrmConPaises.ConhecaObj(oEstado.OPais, oCtrlEstados.OCtrlPaises);
             oFrmConPaises.ShowDialog();
+            this.txtCodPais.Text = oEstado.OPais.Codigo.ToString();
+            this.txtPais.Text = oEstado.OPais.Pais;
+            if(oEstado.OPais.Sigla == "BR")
+            {
+                if (!this.lblUf.Text.EndsWith("*"))
+                {
+                    this.lblUf.Text += "*";
+                }
+            }
+            oFrmConPaises.btnSair.Text = aux;
         }
     }
 }

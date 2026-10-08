@@ -34,13 +34,13 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Estado
         {
             get => estado;
-            set => estado = value;
+            set => estado = value.ToUpper();
         }
 
         public string UF
         {
             get => uf;
-            set => uf = value;
+            set => uf = value.ToUpper();
         }
 
         public Paises OPais

@@ -93,7 +93,7 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oCidade.OEstado.Codigo  = Convert.ToInt32(this.txtCodEstado.Text);
             oCidade.OEstado.Estado  = this.txtEstado.Text;
             msg                     = oCtrlCidades.Salvar(oCidade);
-            if (msg != null)
+            if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);
             }
@@ -102,8 +102,13 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
+            string aux = oFrmConEstados.btnSair.Text;
+            oFrmConEstados.btnSair.Text = "&Selecionar";
             oFrmConEstados.ConhecaObj(oCidade.OEstado, oCtrlCidades.OCtrlEstados);
             oFrmConEstados.ShowDialog();
+            this.txtCodEstado.Text = oCidade.OEstado.Codigo.ToString();
+            this.txtEstado.Text = oCidade.OEstado.Estado;
+            oFrmConEstados.btnSair.Text = aux;
         }
 
         private void FrmCadCidades_Load(object sender, EventArgs e)

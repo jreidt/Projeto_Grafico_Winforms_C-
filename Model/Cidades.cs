@@ -34,13 +34,13 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Cidade
         {
             get => cidade;
-            set => cidade = value;
+            set => cidade = value.ToUpper();
         }
 
         public string DDD
         {
             get => ddd;
-            set => ddd = value;
+            set => ddd = value.ToUpper();
         }
         public Estados OEstado 
         {  

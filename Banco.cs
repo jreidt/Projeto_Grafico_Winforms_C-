@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CADASTRO_2026
+namespace Grafico_2026_Julio_Eidt
 {
     internal class Banco
     {

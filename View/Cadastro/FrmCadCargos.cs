@@ -72,7 +72,7 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oCargo.ExigeCnh         = cboxExigeCnh.Checked;
             oCargo.GanhaComissao    = cboxGanhaComissao.Checked;
             msg                     = oCtrlCargos.Salvar(oCargo);
-            if (msg != null)
+            if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);
             }
@@ -82,6 +82,11 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
         public override void SetFrmConsulta(object obj)
         {
 
+        }
+
+        private void btnSalvar_Click(object sender, EventArgs e)
+        {
+            Salvar();
         }
     }
 }

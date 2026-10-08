@@ -37,25 +37,25 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Pais
         {
             get => pais;
-            set => pais = value;
+            set => pais = value.ToUpper();
         }
 
         public string Sigla
         {
             get => sigla;
-            set => sigla = value;
+            set => sigla = value.ToUpper();
         }
 
         public string DDI
         {
             get => ddi;
-            set => ddi = value;
+            set => ddi = value.ToUpper();
         }
 
         public string Moeda
         {
             get => moeda;
-            set => moeda = value;
+            set => moeda = value.ToUpper();
         }
     }
 }

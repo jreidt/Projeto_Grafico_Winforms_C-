@@ -36,6 +36,10 @@
             this.txtCargo = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
+            // btnSalvar
+            // 
+            this.btnSalvar.Click += new System.EventHandler(this.btnSalvar_Click);
+            // 
             // txtCodigo
             // 
             this.txtCodigo.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
@@ -112,7 +116,7 @@
             this.Controls.SetChildIndex(this.lblDatCad, 0);
             this.Controls.SetChildIndex(this.lblUltAlt, 0);
             this.Controls.SetChildIndex(this.lblCodUsu, 0);
-            this.Controls.SetChildIndex(this.brnSair, 0);
+            this.Controls.SetChildIndex(this.btnSair, 0);
             this.Controls.SetChildIndex(this.lblCodigo, 0);
             this.Controls.SetChildIndex(this.txtCodigo, 0);
             this.Controls.SetChildIndex(this.lblCargo, 0);

@@ -135,7 +135,7 @@
             this.Controls.SetChildIndex(this.lblDatCad, 0);
             this.Controls.SetChildIndex(this.lblUltAlt, 0);
             this.Controls.SetChildIndex(this.lblCodUsu, 0);
-            this.Controls.SetChildIndex(this.brnSair, 0);
+            this.Controls.SetChildIndex(this.btnSair, 0);
             this.Controls.SetChildIndex(this.lblCodigo, 0);
             this.Controls.SetChildIndex(this.txtCodigo, 0);
             this.Controls.SetChildIndex(this.btnPesquisar, 0);

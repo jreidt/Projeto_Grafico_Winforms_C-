@@ -48,7 +48,7 @@
             // 
             // brnSair
             // 
-            this.brnSair.Click += new System.EventHandler(this.brnSair_Click);
+            this.btnSair.Click += new System.EventHandler(this.brnSair_Click);
             // 
             // FrmConCargos
             // 

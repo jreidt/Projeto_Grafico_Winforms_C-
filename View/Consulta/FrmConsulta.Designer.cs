@@ -37,8 +37,8 @@
             // 
             // brnSair
             // 
-            this.brnSair.Location = new System.Drawing.Point(675, 390);
-            this.brnSair.TabIndex = 23;
+            this.btnSair.Location = new System.Drawing.Point(675, 390);
+            this.btnSair.TabIndex = 23;
             // 
             // lblCodigo
             // 
@@ -110,7 +110,7 @@
             this.Name = "FrmConsulta";
             this.Text = "FrmConsulta";
             this.Load += new System.EventHandler(this.FrmConsulta_Load);
-            this.Controls.SetChildIndex(this.brnSair, 0);
+            this.Controls.SetChildIndex(this.btnSair, 0);
             this.Controls.SetChildIndex(this.lblCodigo, 0);
             this.Controls.SetChildIndex(this.txtCodigo, 0);
             this.Controls.SetChildIndex(this.btnExcluir, 0);

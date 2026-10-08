@@ -70,6 +70,30 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         public override void Salvar()
         {
+            if(string.IsNullOrEmpty(this.txtPais.Text))
+            {
+                MessageBox.Show("Informe o nome do país.");
+                this.txtPais.Focus();
+                return;
+            }
+            if(string.IsNullOrEmpty(this.txtSigla.Text))
+            {
+                MessageBox.Show("Informe a sigla do país.");
+                this.txtSigla.Focus();
+                return;
+            }
+            if(string.IsNullOrEmpty(this.txtDdi.Text))
+            {
+                MessageBox.Show("Informe o DDI do país.");
+                this.txtDdi.Focus();
+                return;
+            }
+            if(string.IsNullOrEmpty(this.txtMoeda.Text))
+            {
+                MessageBox.Show("Informe a moeda do país.");
+                this.txtMoeda.Focus();
+                return;
+            }
             string msg;
             oPais.Codigo = Convert.ToInt32(this.txtCodigo.Text);
             oPais.Pais   = this.txtPais.Text;
@@ -77,7 +101,7 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oPais.DDI    = this.txtDdi.Text;
             oPais.Moeda  = this.txtMoeda.Text;
             msg          = oCtrlPaises.Salvar(oPais);
-            if(msg != null)
+            if(!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);
             }

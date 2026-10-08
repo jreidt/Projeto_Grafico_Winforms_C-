@@ -35,7 +35,7 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Cargo
         {
             get => cargo;
-            set => cargo = value;
+            set => cargo = value.ToUpper();
         }
 
         public bool ExigeCnh

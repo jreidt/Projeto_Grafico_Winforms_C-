@@ -154,7 +154,7 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oFuncionario.Codigo             = Convert.ToInt32(this.txtCodigo.Text);
             oFuncionario.Nome               = this.txtNome.Text;
             oFuncionario.Idade              = Convert.ToInt32(this.txtIdade.Text);
-            oFuncionario.Sexo               = Char.ToUpper(this.txtSexo.Text[0]);
+            oFuncionario.Sexo               = this.txtSexo.Text[0];
             oFuncionario.NumDep             = Convert.ToInt32(this.txtNumDependentes.Text);
             oFuncionario.Matricula          = this.txtMatricula.Text;
             oFuncionario.Cpf                = this.txtCpf.Text;
@@ -169,11 +169,11 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oFuncionario.OCidade.Cidade     = this.txtCidade.Text;
             oFuncionario.Cnh                = this.txtCnh.Text;
             oFuncionario.DataValidadeCnh    = this.txtValCnh.Text;
-            oFuncionario.TipoCnh            = char.ToUpper(this.txtTipoCnh.Text[0]);
+            oFuncionario.TipoCnh            = this.txtTipoCnh.Text[0];
             oFuncionario.SalBase            = Convert.ToDouble(this.txtSalBase.Text);
             oFuncionario.Gratificacao       = Convert.ToDouble(this.txtGratificacao.Text);
             msg                             = oCtrlFuncionarios.Salvar(oFuncionario);
-            if (msg != null)
+            if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);
             }
@@ -187,14 +187,24 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         private void btnPesquisarCidade_Click(object sender, EventArgs e)
         {
+            string aux = oFrmConCidades.btnSair.Text;
+            oFrmConCidades.btnSair.Text = "&Selecionar";
             oFrmConCidades.ConhecaObj(oFuncionario.OCidade, oCtrlFuncionarios.OCtrlCidades);
             oFrmConCidades.ShowDialog();
+            this.txtCodCidade.Text = oFuncionario.OCidade.Codigo.ToString();
+            this.txtCidade.Text = oFuncionario.OCidade.Cidade;
+            oFrmConCidades.btnSair.Text = aux;
         }
 
         private void btnPesquisarCargo_Click(object sender, EventArgs e)
         {
+            string aux = oFrmConCargos.btnSair.Text;
+            oFrmConCargos.btnSair.Text = "&Selecionar";
             oFrmConCargos.ConhecaObj(oFuncionario.OCargo, oCtrlFuncionarios.OCtrlCargos);
             oFrmConCargos.ShowDialog();
+            this.txtCodCargo.Text = oFuncionario.OCargo.Codigo.ToString();
+            this.txtCargo.Text = oFuncionario.OCargo.Cargo;
+            oFrmConCargos.btnSair.Text = aux;
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -205,6 +215,11 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
         private void FrmCadFuncionarios_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnSalvar_Click(object sender, EventArgs e)
+        {
+            Salvar();
         }
     }
 }

@@ -28,47 +28,51 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.brnSair = new System.Windows.Forms.Button();
+            this.btnSair = new System.Windows.Forms.Button();
             this.lblCodigo = new System.Windows.Forms.Label();
             this.txtCodigo = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // brnSair
+            // btnSair
             // 
-            this.brnSair.AllowDrop = true;
-            this.brnSair.Location = new System.Drawing.Point(665, 387);
-            this.brnSair.Name = "brnSair";
-            this.brnSair.Size = new System.Drawing.Size(80, 30);
-            this.brnSair.TabIndex = 0;
-            this.brnSair.Text = "Sai&r";
-            this.brnSair.UseVisualStyleBackColor = true;
-            this.brnSair.Click += new System.EventHandler(this.brnSair_Click);
+            this.btnSair.AllowDrop = true;
+            this.btnSair.Location = new System.Drawing.Point(887, 476);
+            this.btnSair.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSair.Name = "btnSair";
+            this.btnSair.Size = new System.Drawing.Size(107, 37);
+            this.btnSair.TabIndex = 0;
+            this.btnSair.Text = "Sai&r";
+            this.btnSair.UseVisualStyleBackColor = true;
+            this.btnSair.Click += new System.EventHandler(this.brnSair_Click);
             // 
             // lblCodigo
             // 
             this.lblCodigo.AutoSize = true;
-            this.lblCodigo.Location = new System.Drawing.Point(43, 41);
+            this.lblCodigo.Location = new System.Drawing.Point(57, 50);
+            this.lblCodigo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCodigo.Name = "lblCodigo";
-            this.lblCodigo.Size = new System.Drawing.Size(40, 13);
+            this.lblCodigo.Size = new System.Drawing.Size(51, 16);
             this.lblCodigo.TabIndex = 1;
             this.lblCodigo.Text = "Código";
             // 
             // txtCodigo
             // 
-            this.txtCodigo.Location = new System.Drawing.Point(46, 57);
+            this.txtCodigo.Location = new System.Drawing.Point(61, 70);
+            this.txtCodigo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtCodigo.MaxLength = 50;
             this.txtCodigo.Name = "txtCodigo";
-            this.txtCodigo.Size = new System.Drawing.Size(90, 20);
+            this.txtCodigo.Size = new System.Drawing.Size(119, 22);
             this.txtCodigo.TabIndex = 2;
             // 
             // FrmBase
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1067, 554);
             this.Controls.Add(this.txtCodigo);
             this.Controls.Add(this.lblCodigo);
-            this.Controls.Add(this.brnSair);
+            this.Controls.Add(this.btnSair);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "FrmBase";
             this.Text = "FrmBase";
             this.ResumeLayout(false);
@@ -77,9 +81,8 @@
         }
 
         #endregion
-
-        protected System.Windows.Forms.Button brnSair;
         protected System.Windows.Forms.Label lblCodigo;
         protected System.Windows.Forms.TextBox txtCodigo;
+        public System.Windows.Forms.Button btnSair;
     }
 }

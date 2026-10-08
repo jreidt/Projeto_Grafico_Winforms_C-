@@ -124,13 +124,13 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Matricula
         {
             get => matricula;
-            set => matricula = value;
+            set => matricula = value.ToUpper();
         }
 
         public string Cpf
         {
             get => cpf;
-            set => cpf = value;
+            set => cpf = value.ToUpper();
         }
 
         public Cargos OCargo
@@ -160,13 +160,13 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Cep
         {
             get => cep;
-            set => cep = value;
+            set => cep = value.ToUpper();
         }
 
         public string Logradouro
         {
             get => logradouro;
-            set => logradouro = value;
+            set => logradouro = value.ToUpper();
         }
 
         public int Numero
@@ -178,13 +178,13 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Complemento
         {
             get => complemento;
-            set => complemento = value;
+            set => complemento = value.ToUpper();
         }
 
         public string Bairro
         {
             get => bairro;
-            set => bairro = value;
+            set => bairro = value.ToUpper();
         }
 
         public Cidades OCidade
@@ -196,7 +196,7 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Cnh
         {
             get => cnh;
-            set => cnh = value;
+            set => cnh = value.ToUpper();
         }
 
         public string DataValidadeCnh
@@ -208,7 +208,7 @@ namespace Grafico_2026_Julio_Eidt.Model
         public char TipoCnh
         {
             get => tipoCnh;
-            set => tipoCnh = value;
+            set => tipoCnh = char.ToUpper(value);
         }
 
     }
