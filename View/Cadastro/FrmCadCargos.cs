@@ -66,6 +66,13 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         public override void Salvar()
         {
+            if (string.IsNullOrEmpty(this.txtCargo.Text))
+            {
+                MessageBox.Show("Informe o nome do cargo.");
+                this.txtCargo.Focus();
+                return;
+            }
+            
             string msg;
             oCargo.Codigo           = Convert.ToInt32(this.txtCodigo.Text);
             oCargo.Cargo            = txtCargo.Text;

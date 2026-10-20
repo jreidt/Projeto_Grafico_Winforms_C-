@@ -13,12 +13,13 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoEstados()
         {
-            cnn = Banco.AbrirBD();
+            
         }
         public override string Salvar(object obj)
         {
             Estados oEstado = (Estados)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
             if (oEstado.Codigo == 0)
             {
                 sql = "insert into Estados(Estado, UF, ID_Pais) values (@estado, @uf, @id_paises)";
@@ -37,6 +38,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.CommandText = "Select @@IDENTITY";
                 ok = cmd.ExecuteScalar().ToString();
             }
+            cnn.Close();
             return ok;
         }
 
@@ -52,13 +54,42 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            return null;
+            string sql = "Select E.ID_Estados, E.Estado, E.UF, E.ID_Pais, P.Pais from Estados E inner join Paises P on E.ID_Pais = P.ID_Paises";
+
+            var lista = new List<object>();
+
+            cnn = Banco.AbrirBD();
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Estados oEstado = new Estados();
+                        oEstado.Codigo = Convert.ToInt32(dr["ID_Estados"]);
+                        oEstado.Estado = dr["Estado"].ToString();
+                        oEstado.UF = dr["UF"].ToString();
+                        oEstado.OPais.Codigo = Convert.ToInt32(dr["ID_Pais"]);
+                        oEstado.OPais.Pais = dr["Pais"].ToString();
+                        lista.Add(oEstado);
+                    }
+                }
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return lista;
         }
 
         public override string Excluir(object obj)
         {
             Estados oEstado = (Estados)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
 
             sql = "delete Estados where ID_Estados = @codigo";
 
@@ -68,6 +99,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.ExecuteNonQuery();
             }
 
+            cnn.Close();
             throw new NotImplementedException();
         }
     }

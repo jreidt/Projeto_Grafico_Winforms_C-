@@ -19,6 +19,8 @@ namespace Grafico_2026_Julio_Eidt.DAO
         {
             Cargos oCargo = (Cargos)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
+
             if (oCargo.Codigo == 0)
             {
                 sql = "insert into Cargos(Cargo, Exige_CNH, Ganha_Comissao) values (@cargo, @exige_cnh, @ganha_comissao)";
@@ -37,6 +39,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.CommandText = "Select @@IDENTITY";
                 ok = cmd.ExecuteScalar().ToString();
             }
+            cnn.Close();
             return ok;
         }
 
@@ -52,13 +55,41 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            return null;
+            string sql = "Select ID_Cargos, Cargo, Exige_CNH, Ganha_Comissao from Cargos";
+
+            var lista = new List<object>();
+
+            cnn = Banco.AbrirBD();
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Cargos oCargo = new Cargos();
+                        oCargo.Codigo = Convert.ToInt32(dr["ID_Cargos"]);
+                        oCargo.Cargo = dr["Cargo"].ToString();
+                        oCargo.ExigeCnh = Convert.ToBoolean(dr["Exige_CNH"]);
+                        oCargo.GanhaComissao = Convert.ToBoolean(dr["Ganha_Comissao"]);
+                        lista.Add(oCargo);
+                    }
+                }
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return lista;
         }
 
         public override string Excluir(object obj)
         {
             Cargos oCargo = (Cargos)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
 
             sql = "delete Cargos where ID_Cargos = @codigo";
 
@@ -68,6 +99,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.ExecuteNonQuery();
             }
 
+            cnn.Close();
             throw new NotImplementedException();
         }
     }

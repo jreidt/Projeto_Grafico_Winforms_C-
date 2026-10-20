@@ -150,6 +150,91 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         public override void Salvar()
         {
+            if (string.IsNullOrEmpty(this.txtNome.Text))
+            {
+                MessageBox.Show("Informe o nome do funcionário.");
+                this.txtNome.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtIdade.Text))
+            {
+                MessageBox.Show("Informe a idade do funcionário.");
+                this.txtIdade.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtSexo.Text))
+            {
+                MessageBox.Show("Informe o sexo do funcionário.");
+                this.txtSexo.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtMatricula.Text))
+            {
+                MessageBox.Show("Informe a matrícula do funcionário.");
+                this.txtMatricula.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtCpf.Text))
+            {
+                MessageBox.Show("Informe o CPF do funcionário.");
+                this.txtCpf.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtNumDependentes.Text))
+            {
+                MessageBox.Show("Informe o número de dependentes do funcionário.");
+                this.txtNumDependentes.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtCodCargo.Text))
+            {
+                MessageBox.Show("Informe o código do cargo do funcionário.");
+                this.txtCodCargo.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtCep.Text))
+            {
+                MessageBox.Show("Informe o CEP do funcionário.");
+                this.txtCep.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtLogradouro.Text))
+            {
+                MessageBox.Show("Informe o logradouro do funcionário.");
+                this.txtLogradouro.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtNumero.Text))
+            {
+                MessageBox.Show("Informe o número do endereço do funcionário.");
+                this.txtNumero.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtComplemento.Text))
+            {
+                MessageBox.Show("Informe o complemento do endereço do funcionário.");
+                this.txtComplemento.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtBairro.Text))
+            {
+                MessageBox.Show("Informe o bairro do funcionário.");
+                this.txtBairro.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtCodCidade.Text))
+            {
+                MessageBox.Show("Informe o código da cidade do funcionário.");
+                this.txtCodCidade.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtSalBase.Text))
+            {
+                MessageBox.Show("Informe o salário base do funcionário.");
+                this.txtSalBase.Focus();
+                return;
+            }
+
             string msg;
             oFuncionario.Codigo             = Convert.ToInt32(this.txtCodigo.Text);
             oFuncionario.Nome               = this.txtNome.Text;

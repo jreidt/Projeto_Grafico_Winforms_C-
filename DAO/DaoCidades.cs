@@ -13,12 +13,14 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoCidades()
         {
-            cnn = Banco.AbrirBD();
+            
         }
         public override string Salvar(object obj)
         {
             Cidades oCidade = (Cidades)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
+
             if (oCidade.Codigo == 0)
             {
                 sql = "insert into Cidades(Cidade, DDD, ID_Estado) values (@cidade, @ddd, @id_estado)";
@@ -37,6 +39,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.CommandText = "Select @@IDENTITY";
                 ok = cmd.ExecuteScalar().ToString();
             }
+            cnn.Close();
             return ok;
         }
 
@@ -52,13 +55,44 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            return null;
+            string sql = "Select C.ID_Cidades, C.Cidade, C.DDD, C.ID_Estado, E.Estado, E.ID_Pais, P.Pais from Cidades C inner join Estados E on C.ID_Estado = E.ID_Estados inner join Paises P on E.ID_Pais = P.ID_Paises";
+
+            var lista = new List<object>();
+
+            cnn = Banco.AbrirBD();
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Cidades oCidade = new Cidades();
+                        oCidade.Codigo = Convert.ToInt32(dr["ID_Cidades"]);
+                        oCidade.Cidade = dr["Cidade"].ToString();
+                        oCidade.DDD = dr["DDD"].ToString();
+                        oCidade.OEstado.Codigo = Convert.ToInt32(dr["ID_Estado"]);
+                        oCidade.OEstado.Estado = dr["Estado"].ToString();
+                        oCidade.OEstado.OPais.Codigo = Convert.ToInt32(dr["ID_Pais"]);
+                        oCidade.OEstado.OPais.Pais = dr["Pais"].ToString();
+                        lista.Add(oCidade);
+                    }
+                }
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return lista;
         }
 
         public override string Excluir(object obj)
         {
             Cidades oCidade = (Cidades)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
 
             sql = "delete Cidades where ID_Cidades = @codigo";
 
@@ -67,7 +101,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.Parameters.AddWithValue("@codigo", oCidade.Codigo);
                 cmd.ExecuteNonQuery();
             }
-
+            cnn.Close();
             throw new NotImplementedException();
         }
     }

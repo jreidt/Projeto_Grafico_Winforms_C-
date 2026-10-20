@@ -36,7 +36,7 @@ namespace Grafico_2026_Julio_Eidt.Controller
 
         public override List<object> Pesquisar(object obj)
         {
-            return null;
+            return oDaoFuncionarios.Pesquisar(obj);
         }
 
         public override string Excluir(object obj)

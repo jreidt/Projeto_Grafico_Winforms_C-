@@ -26,6 +26,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         {
             oCargo = (Cargos)obj;
             oCtrlCargos = (CtrlCargos)ctrl;
+            this.Pesquisar();
         }
 
         public override void SetFrmCadastro(object obj)
@@ -35,7 +36,23 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
 
         public override void Pesquisar()
         {
-            
+            this.listV.Items.Clear();
+            oCargo.Cargo = txtCodigo.Text.Trim().ToUpper();
+            var listaResultado = new List<Cargos>();
+            foreach (var cargo in oCtrlCargos.Pesquisar(oCargo))
+            {
+                listaResultado.Add((Cargos)cargo);
+            }
+
+            foreach (Cargos oCargoPesq in listaResultado)
+            {
+                ListViewItem item = new ListViewItem(".");
+                item.SubItems.Add(oCargoPesq.Codigo.ToString());
+                item.SubItems.Add(oCargoPesq.Cargo);
+                item.SubItems.Add(oCargoPesq.ExigeCnh ? "Sim" : "Não");
+                item.SubItems.Add(oCargoPesq.GanhaComissao ? "Sim" : "Não");
+                listV.Items.Add(item);
+            }
         }
 
         public override void Incluir()
@@ -43,6 +60,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCargos.ConhecaObj(oCargo, oCtrlCargos);
             oFrmCadCargos.LimpaTxt();
             oFrmCadCargos.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Alterar()
@@ -51,6 +69,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCargos.LimpaTxt();
             oFrmCadCargos.CarregaTxt();
             oFrmCadCargos.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Excluir()
@@ -65,6 +84,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCargos.ShowDialog();
             oFrmCadCargos.DesbloquearTxt();
             oFrmCadCargos.btnSalvar.Text = aux;
+            this.Pesquisar();
         }
 
         private void btnPesquisar_Click(object sender, EventArgs e)

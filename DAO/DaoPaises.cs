@@ -13,13 +13,14 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoPaises()
         {
-            cnn = Banco.AbrirBD();
+            
         }
         public override string Salvar(object obj)
         {
             Paises oPais = (Paises)obj;
             string ok = string.Empty, sql = string.Empty;
-            if(oPais.Codigo == 0)
+            cnn = Banco.AbrirBD();
+            if (oPais.Codigo == 0)
             {
                 sql = "insert into Paises(Pais, Sigla, DDI , Moeda) values (@pais, @sigla, @ddi, @moeda)";
             }
@@ -38,6 +39,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.CommandText = "Select @@IDENTITY";
                 ok = cmd.ExecuteScalar().ToString();
             }
+            cnn.Close();
             return ok;
         }
 
@@ -53,13 +55,42 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            return null;
+            string sql = "Select ID_Paises, Pais, Sigla, DDI, Moeda from Paises";
+
+            var lista = new List<object>();
+
+            cnn = Banco.AbrirBD();
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Paises oPais = new Paises();
+                        oPais.Codigo = Convert.ToInt32(dr["ID_Paises"]);
+                        oPais.Pais = dr["Pais"].ToString();
+                        oPais.Sigla = dr["Sigla"].ToString();
+                        oPais.DDI = dr["DDI"].ToString();
+                        oPais.Moeda = dr["Moeda"].ToString();
+                        lista.Add(oPais);
+                    }        
+                }
+                
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return lista;
         }
 
         public override string Excluir(object obj)
         {
             Paises oPais = (Paises)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
 
             sql = "delete Paises where ID_Paises = @codigo";
 
@@ -68,7 +99,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.Parameters.AddWithValue("@codigo", oPais.Codigo);
                 cmd.ExecuteNonQuery();
             }
-            
+            cnn.Close();
             throw new NotImplementedException();
         }
     }

@@ -84,6 +84,25 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
 
         public override void Salvar()
         {
+            if (string.IsNullOrEmpty(this.txtEstado.Text))
+            {
+                MessageBox.Show("Informe o nome do estado.");
+                this.txtEstado.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtUf.Text))
+            {
+                MessageBox.Show("Informe a sigla do estado.");
+                this.txtUf.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(this.txtCodPais.Text))
+            {
+                MessageBox.Show("Informe o código do país.");
+                this.txtCodPais.Focus();
+                return;
+            }
+
             string msg;
             oEstado.Codigo = Convert.ToInt32(this.txtCodigo.Text);
             oEstado.Estado       = this.txtEstado.Text;

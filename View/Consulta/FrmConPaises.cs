@@ -30,6 +30,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         {
             oPais = (Paises)obj;
             oCtrlPaises = (CtrlPaises)ctrl;
+            this.Pesquisar();
         }
 
         public override void SetFrmCadastro(object obj)
@@ -42,6 +43,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadPaises.ConhecaObj(oPais, oCtrlPaises);
             oFrmCadPaises.LimpaTxt();
             oFrmCadPaises.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Alterar()
@@ -50,6 +52,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadPaises.LimpaTxt();
             oFrmCadPaises.CarregaTxt();
             oFrmCadPaises.ShowDialog();
+            this.Pesquisar();
         }   
 
         public override void Excluir()
@@ -64,11 +67,31 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadPaises.ShowDialog();
             oFrmCadPaises.btnSalvar.Text = aux;
             oFrmCadPaises.DesbloquearTxt();
+            this.Pesquisar();
         }
+
         public override void Pesquisar()
         {
+            this.listV.Items.Clear();
+            oPais.Pais = txtCodigo.Text.Trim().ToUpper();
+            var listaResultado = new List<Paises>();
+            foreach (var pais in oCtrlPaises.Pesquisar(oPais))
+            {
+                listaResultado.Add((Paises)pais);
+            }
 
+            foreach (Paises oPaisPesq in listaResultado)
+            {
+                ListViewItem item = new ListViewItem(".");
+                item.SubItems.Add(oPaisPesq.Codigo.ToString());
+                item.SubItems.Add(oPaisPesq.Pais);
+                item.SubItems.Add(oPaisPesq.Sigla);
+                item.SubItems.Add(oPaisPesq.DDI);
+                item.SubItems.Add(oPaisPesq.Moeda);
+                listV.Items.Add(item);
+            }
         }
+
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
             Pesquisar();

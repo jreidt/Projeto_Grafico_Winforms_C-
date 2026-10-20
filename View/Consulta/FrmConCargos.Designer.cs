@@ -28,6 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.colCargo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colCnh = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colComissao = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // btnExcluir
@@ -46,14 +49,44 @@
             // 
             this.btnPesquisar.Click += new System.EventHandler(this.btnPesquisar_Click);
             // 
-            // brnSair
+            // listV
+            // 
+            this.listV.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colCargo,
+            this.colCnh,
+            this.colComissao});
+            // 
+            // txtCodigo
+            // 
+            this.txtCodigo.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            // 
+            // btnSair
             // 
             this.btnSair.Click += new System.EventHandler(this.brnSair_Click);
             // 
+            // colCargo
+            // 
+            this.colCargo.Text = "Cargo";
+            this.colCargo.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.colCargo.Width = 200;
+            // 
+            // colCnh
+            // 
+            this.colCnh.Text = "Exige Cnh";
+            this.colCnh.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.colCnh.Width = 100;
+            // 
+            // colComissao
+            // 
+            this.colComissao.Text = "Ganha Comissão";
+            this.colComissao.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.colComissao.Width = 130;
+            // 
             // FrmConCargos
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.ClientSize = new System.Drawing.Size(1067, 554);
+            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "FrmConCargos";
             this.Text = "Consulta de Cargos";
             this.ResumeLayout(false);
@@ -62,5 +95,9 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.ColumnHeader colCargo;
+        private System.Windows.Forms.ColumnHeader colCnh;
+        private System.Windows.Forms.ColumnHeader colComissao;
     }
 }

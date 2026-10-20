@@ -13,12 +13,13 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoFuncionarios()
         {
-            cnn = Banco.AbrirBD();
+            
         }
         public override string Salvar(object obj)
         {
             Funcionarios oFuncionario = (Funcionarios)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
             if (oFuncionario.Codigo == 0)
             {
                 sql = "insert into Funcionarios(Matricula, Nome, CPF, Idade, Sexo, Numero_Dependentes, Numero_CNH, Tipo_CNH, Data_Validade_CNH, SalarioBase, Gratificacao, ID_Cargo, ID_Cidade, Logradouro, Numero, Complemento, Bairro, CEP) values (@matricula, @nome, @cpf, @idade, @sexo, @numero_dependentes, @numero_cnh, @tipo_cnh, @data_validade_cnh, @salario_base, @gratificacao, @id_cargo, @id_cidade, @logradouro, @numero, @complemento, @bairro, @cep)";
@@ -52,6 +53,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.CommandText = "Select @@IDENTITY";
                 ok = cmd.ExecuteScalar().ToString();
             }
+            cnn.Close();
             return ok;
         }
 
@@ -67,13 +69,48 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            return null;
+            string sql = "Select F.ID_Funcionarios, F.Nome, F.Idade, F.Sexo, F.Matricula, F.CPF, F.Numero_Dependentes, F.SalarioBase, F.Gratificacao, F.ID_Cargo, C.Cargo from Funcionarios F inner join Cargos C on F.ID_Cargo = C.ID_Cargos";
+
+            var lista = new List<object>();
+
+            cnn = Banco.AbrirBD();
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        Funcionarios oFuncionario = new Funcionarios();
+                        oFuncionario.Codigo = Convert.ToInt32(dr["ID_Funcionarios"]);
+                        oFuncionario.Nome = dr["Nome"].ToString();
+                        oFuncionario.Idade = Convert.ToInt32(dr["Idade"]);
+                        oFuncionario.Sexo = Char.ToUpper(dr["Sexo"].ToString()[0]);
+                        oFuncionario.Matricula = dr["Matricula"].ToString();
+                        oFuncionario.Cpf = dr["CPF"].ToString();
+                        oFuncionario.NumDep = Convert.ToInt32(dr["Numero_Dependentes"]);
+                        oFuncionario.SalBase = Convert.ToDouble(dr["SalarioBase"]);
+                        oFuncionario.Gratificacao = Convert.ToDouble(dr["Gratificacao"]);
+                        oFuncionario.OCargo.Codigo = Convert.ToInt32(dr["ID_Cargo"]);
+                        oFuncionario.OCargo.Cargo = dr["Cargo"].ToString();
+                        lista.Add(oFuncionario);
+                    }
+                }
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return lista;
         }
 
         public override string Excluir(object obj)
         {
             Funcionarios oFuncionario = (Funcionarios)obj;
             string ok = string.Empty, sql = string.Empty;
+            cnn = Banco.AbrirBD();
 
             sql = "delete Funcionarios where ID_Funcionarios = @codigo";
 
@@ -83,6 +120,7 @@ namespace Grafico_2026_Julio_Eidt.DAO
                 cmd.ExecuteNonQuery();
             }
 
+            cnn.Close();
             throw new NotImplementedException();
         }
     }

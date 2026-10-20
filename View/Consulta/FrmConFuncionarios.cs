@@ -26,6 +26,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         {
             oFuncionario = (Funcionarios)obj;
             oCtrlFuncionarios = (CtrlFuncionarios)ctrl;
+            this.Pesquisar();
         }
 
         public override void SetFrmCadastro(object obj)
@@ -35,7 +36,30 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
 
         public override void Pesquisar()
         {
-            
+            this.listV.Items.Clear();
+            oFuncionario.Nome = txtCodigo.Text.Trim().ToUpper();
+            var listaResultado = new List<Funcionarios>();
+            foreach (var funcionario in oCtrlFuncionarios.Pesquisar(oFuncionario))
+            {
+                listaResultado.Add((Funcionarios)funcionario);
+            }
+
+            foreach (Funcionarios oFuncionarioPesq in listaResultado)
+            {
+                ListViewItem item = new ListViewItem(".");
+                item.SubItems.Add(oFuncionarioPesq.Codigo.ToString());
+                item.SubItems.Add(oFuncionarioPesq.Nome);
+                item.SubItems.Add(oFuncionarioPesq.Idade.ToString());
+                item.SubItems.Add(oFuncionarioPesq.Sexo.ToString());
+                item.SubItems.Add(oFuncionarioPesq.Matricula);
+                item.SubItems.Add(oFuncionarioPesq.Cpf);
+                item.SubItems.Add(oFuncionarioPesq.NumDep.ToString());
+                item.SubItems.Add(oFuncionarioPesq.SalBase.ToString("C2"));
+                item.SubItems.Add(oFuncionarioPesq.Gratificacao.ToString("C2"));
+                item.SubItems.Add(oFuncionarioPesq.OCargo.Codigo.ToString());
+                item.SubItems.Add(oFuncionarioPesq.OCargo.Cargo);
+                listV.Items.Add(item);
+            }
         }
 
         public override void Incluir()
@@ -43,6 +67,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadFuncionarios.ConhecaObj(oFuncionario, oCtrlFuncionarios);
             oFrmCadFuncionarios.LimpaTxt();
             oFrmCadFuncionarios.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Alterar()
@@ -51,6 +76,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadFuncionarios.LimpaTxt();
             oFrmCadFuncionarios.CarregaTxt();
             oFrmCadFuncionarios.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Excluir()
@@ -65,6 +91,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadFuncionarios.ShowDialog();
             oFrmCadFuncionarios.DesbloquearTxt();
             oFrmCadFuncionarios.btnSalvar.Text = aux;
+            this.Pesquisar();
         }
 
         private void btnPesquisar_Click(object sender, EventArgs e)

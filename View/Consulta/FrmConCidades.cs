@@ -26,6 +26,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         {
             oCidades = (Cidades)obj;
             oCtrlCidades = (CtrlCidades)ctrl;
+            this.Pesquisar();
         }
 
         public override void SetFrmCadastro(object obj)
@@ -35,7 +36,26 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
 
         public override void Pesquisar()
         {
-            
+            this.listV.Items.Clear();
+            oCidades.Cidade = txtCodigo.Text.Trim().ToUpper();
+            var listaResultado = new List<Cidades>();
+            foreach (var cidade in oCtrlCidades.Pesquisar(oCidades))
+            {
+                listaResultado.Add((Cidades)cidade);
+            }
+
+            foreach (Cidades oCidadePesq in listaResultado)
+            {
+                ListViewItem item = new ListViewItem(".");
+                item.SubItems.Add(oCidadePesq.Codigo.ToString());
+                item.SubItems.Add(oCidadePesq.Cidade);
+                item.SubItems.Add(oCidadePesq.DDD);
+                item.SubItems.Add(oCidadePesq.OEstado.Codigo.ToString());
+                item.SubItems.Add(oCidadePesq.OEstado.Estado);
+                item.SubItems.Add(oCidadePesq.OEstado.OPais.Codigo.ToString());
+                item.SubItems.Add(oCidadePesq.OEstado.OPais.Pais);
+                listV.Items.Add(item);
+            }
         }
 
         public override void Incluir()
@@ -43,6 +63,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCidades.ConhecaObj(oCidades, oCtrlCidades);
             oFrmCadCidades.LimpaTxt();
             oFrmCadCidades.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Alterar()
@@ -51,6 +72,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCidades.LimpaTxt();
             oFrmCadCidades.CarregaTxt();
             oFrmCadCidades.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Excluir()
@@ -64,7 +86,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCidades.BloquearTxt();
             oFrmCadCidades.ShowDialog();
             oFrmCadCidades.btnSalvar.Text = aux;
-            Sair();
+            this.Pesquisar();
         }
 
         private void btnPesquisar_Click(object sender, EventArgs e)

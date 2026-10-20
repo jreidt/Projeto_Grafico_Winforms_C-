@@ -25,6 +25,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         {
             oEstado = (Estados)obj;
             oCtrlEstados = (CtrlEstados)ctrl;
+            this.Pesquisar();
         }
 
         public override void SetFrmCadastro(object obj)
@@ -34,7 +35,24 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
 
         public override void Pesquisar()
         {
-         
+            this.listV.Items.Clear();
+            oEstado.Estado = txtCodigo.Text.Trim().ToUpper();
+            var listaResultado = new List<Estados>();
+            foreach (var estado in oCtrlEstados.Pesquisar(oEstado))
+            {
+                listaResultado.Add((Estados)estado);
+            }
+
+            foreach (Estados oEstadoPesq in listaResultado)
+            {
+                ListViewItem item = new ListViewItem(".");
+                item.SubItems.Add(oEstadoPesq.Codigo.ToString());
+                item.SubItems.Add(oEstadoPesq.Estado);
+                item.SubItems.Add(oEstadoPesq.UF);
+                item.SubItems.Add(oEstadoPesq.OPais.Codigo.ToString());
+                item.SubItems.Add(oEstadoPesq.OPais.Pais);
+                listV.Items.Add(item);
+            }
         }
 
         public override void Incluir()
@@ -42,6 +60,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadEstados.ConhecaObj(oEstado, oCtrlEstados);
             oFrmCadEstados.LimpaTxt();
             oFrmCadEstados.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Alterar()
@@ -50,6 +69,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadEstados.LimpaTxt();
             oFrmCadEstados.CarregaTxt();
             oFrmCadEstados.ShowDialog();
+            this.Pesquisar();
         }
 
         public override void Excluir()
@@ -64,6 +84,7 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadEstados.ShowDialog();
             oFrmCadEstados.DesbloquearTxt();
             oFrmCadEstados.btnSalvar.Text = aux;
+            this.Pesquisar();
         }
         private void btnPesquisar_Click(object sender, EventArgs e)
         {

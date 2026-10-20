@@ -28,6 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.colPais = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colSigla = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colDdi = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colMoeda = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // btnExcluir
@@ -46,14 +50,47 @@
             // 
             this.btnPesquisar.Click += new System.EventHandler(this.btnPesquisar_Click);
             // 
-            // brnSair
+            // listV
+            // 
+            this.listV.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colPais,
+            this.colSigla,
+            this.colDdi,
+            this.colMoeda});
+            // 
+            // txtCodigo
+            // 
+            this.txtCodigo.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            // 
+            // btnSair
             // 
             this.btnSair.Click += new System.EventHandler(this.brnSair_Click);
             // 
+            // colPais
+            // 
+            this.colPais.Text = "Pais";
+            this.colPais.Width = 200;
+            // 
+            // colSigla
+            // 
+            this.colSigla.Text = "Sigla";
+            this.colSigla.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // colDdi
+            // 
+            this.colDdi.Text = "DDI";
+            this.colDdi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // colMoeda
+            // 
+            this.colMoeda.Text = "Moeda";
+            this.colMoeda.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // FrmConPaises
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.ClientSize = new System.Drawing.Size(1067, 554);
+            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "FrmConPaises";
             this.Text = "Consulta de Paises";
             this.Load += new System.EventHandler(this.FrmConPaises_Load);
@@ -63,5 +100,10 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.ColumnHeader colPais;
+        private System.Windows.Forms.ColumnHeader colSigla;
+        private System.Windows.Forms.ColumnHeader colDdi;
+        private System.Windows.Forms.ColumnHeader colMoeda;
     }
 }
