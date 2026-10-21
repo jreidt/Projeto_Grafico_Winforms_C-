@@ -37,7 +37,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         public override void Pesquisar()
         {
             this.listV.Items.Clear();
-            oFuncionario.Nome = txtCodigo.Text.Trim().ToUpper();
             var listaResultado = new List<Funcionarios>();
             foreach (var funcionario in oCtrlFuncionarios.Pesquisar(oFuncionario))
             {

@@ -73,7 +73,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         public override void Pesquisar()
         {
             this.listV.Items.Clear();
-            oPais.Pais = txtCodigo.Text.Trim().ToUpper();
             var listaResultado = new List<Paises>();
             foreach (var pais in oCtrlPaises.Pesquisar(oPais))
             {

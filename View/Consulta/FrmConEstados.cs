@@ -36,7 +36,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         public override void Pesquisar()
         {
             this.listV.Items.Clear();
-            oEstado.Estado = txtCodigo.Text.Trim().ToUpper();
             var listaResultado = new List<Estados>();
             foreach (var estado in oCtrlEstados.Pesquisar(oEstado))
             {

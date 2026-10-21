@@ -1,6 +1,7 @@
 ﻿using Grafico_2026_Julio_Eidt.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -13,34 +14,52 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoCidades()
         {
-            
+
         }
+
         public override string Salvar(object obj)
         {
             Cidades oCidade = (Cidades)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
+            {
+                try
+                {
+                    int codigo;
 
-            if (oCidade.Codigo == 0)
-            {
-                sql = "insert into Cidades(Cidade, DDD, ID_Estado) values (@cidade, @ddd, @id_estado)";
+                    if (oCidade.Codigo == 0)
+                    {
+                        const string sql = "insert into Cidades(Cidade, DDD, ID_Estado) output inserted.ID_Cidades values (@cidade, @ddd, @id_estado)";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oCidade, cmd);
+                            codigo = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+                    }
+                    else
+                    {
+                        const string sql = "update Cidades set Cidade = @cidade, DDD = @ddd, ID_Estado = @id_estado where ID_Cidades = @codigo";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oCidade, cmd);
+                            cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oCidade.Codigo;
+                            if (cmd.ExecuteNonQuery() == 0)
+                            {
+                                throw new InvalidOperationException("Nenhum registro foi atualizado.");
+                            }
+                            codigo = oCidade.Codigo;
+                        }
+                    }
+                    tx.Commit();
+                    oCidade.Codigo = codigo;
+                    return codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-            else
-            {
-                sql = "update Cidades set Cidade = @cidade, DDD = @ddd, ID_Estado = @id_estado where ID_Cidades = @codigo";
-            }
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
-            {
-                cmd.Parameters.AddWithValue("@cidade", oCidade.Cidade);
-                cmd.Parameters.AddWithValue("@ddd", oCidade.DDD);
-                cmd.Parameters.AddWithValue("@id_estado", oCidade.OEstado.Codigo);
-                cmd.Parameters.AddWithValue("@codigo", oCidade.Codigo);
-                cmd.ExecuteNonQuery();
-                cmd.CommandText = "Select @@IDENTITY";
-                ok = cmd.ExecuteScalar().ToString();
-            }
-            cnn.Close();
-            return ok;
         }
 
         public override string CarregarObj(object obj)
@@ -55,14 +74,12 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            string sql = "Select C.ID_Cidades, C.Cidade, C.DDD, C.ID_Estado, E.Estado, E.ID_Pais, P.Pais from Cidades C inner join Estados E on C.ID_Estado = E.ID_Estados inner join Paises P on E.ID_Pais = P.ID_Paises";
-
             var lista = new List<object>();
 
-            cnn = Banco.AbrirBD();
-
-            try
+            using (cnn = Banco.AbrirBD())
             {
+                const string sql = "Select C.ID_Cidades, C.Cidade, C.DDD, C.ID_Estado, E.Estado, E.ID_Pais, P.Pais from Cidades C inner join Estados E on C.ID_Estado = E.ID_Estados inner join Paises P on E.ID_Pais = P.ID_Paises";
+
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
@@ -79,30 +96,44 @@ namespace Grafico_2026_Julio_Eidt.DAO
                         lista.Add(oCidade);
                     }
                 }
+            }
 
-            }
-            finally
-            {
-                cnn.Close();
-            }
             return lista;
         }
 
         public override string Excluir(object obj)
         {
             Cidades oCidade = (Cidades)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
-
-            sql = "delete Cidades where ID_Cidades = @codigo";
-
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
             {
-                cmd.Parameters.AddWithValue("@codigo", oCidade.Codigo);
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    const string sql = "delete from Cidades where ID_Cidades = @codigo";
+                    using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                    {
+                        cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oCidade.Codigo;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            throw new InvalidOperationException("Nenhum registro foi excluído.");
+                        }
+                    }
+                    tx.Commit();
+                    return oCidade.Codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-            cnn.Close();
-            throw new NotImplementedException();
+        }
+
+        private static void AdiconarParametros(Cidades oCidade, SqlCommand cmd)
+        {
+            cmd.Parameters.Add("@cidade", SqlDbType.VarChar, 100).Value = oCidade.Cidade;
+            cmd.Parameters.Add("@ddd", SqlDbType.VarChar, 5).Value = oCidade.DDD;
+            cmd.Parameters.Add("@id_estado", SqlDbType.Int).Value = oCidade.OEstado.Codigo;
         }
     }
 }

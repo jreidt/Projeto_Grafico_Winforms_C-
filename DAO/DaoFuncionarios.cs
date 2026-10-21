@@ -1,6 +1,7 @@
 ﻿using Grafico_2026_Julio_Eidt.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -13,48 +14,52 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoFuncionarios()
         {
-            
+
         }
+
         public override string Salvar(object obj)
         {
             Funcionarios oFuncionario = (Funcionarios)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
-            if (oFuncionario.Codigo == 0)
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
             {
-                sql = "insert into Funcionarios(Matricula, Nome, CPF, Idade, Sexo, Numero_Dependentes, Numero_CNH, Tipo_CNH, Data_Validade_CNH, SalarioBase, Gratificacao, ID_Cargo, ID_Cidade, Logradouro, Numero, Complemento, Bairro, CEP) values (@matricula, @nome, @cpf, @idade, @sexo, @numero_dependentes, @numero_cnh, @tipo_cnh, @data_validade_cnh, @salario_base, @gratificacao, @id_cargo, @id_cidade, @logradouro, @numero, @complemento, @bairro, @cep)";
+                try
+                {
+                    int codigo;
+
+                    if (oFuncionario.Codigo == 0)
+                    {
+                        const string sql = "insert into Funcionarios(Matricula, Nome, CPF, Idade, Sexo, Numero_Dependentes, Numero_CNH, Tipo_CNH, Data_Validade_CNH, SalarioBase, Gratificacao, ID_Cargo, ID_Cidade, Logradouro, Numero, Complemento, Bairro, CEP) output inserted.ID_Funcionarios values (@matricula, @nome, @cpf, @idade, @sexo, @numero_dependentes, @numero_cnh, @tipo_cnh, @data_validade_cnh, @salario_base, @gratificacao, @id_cargo, @id_cidade, @logradouro, @numero, @complemento, @bairro, @cep)";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oFuncionario, cmd);
+                            codigo = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+                    }
+                    else
+                    {
+                        const string sql = "update Funcionarios set Matricula = @matricula, Nome = @nome, CPF = @cpf, Idade = @idade, Sexo = @sexo, Numero_Dependentes = @numero_dependentes, Numero_CNH = @numero_cnh, Tipo_CNH = @tipo_cnh, Data_Validade_CNH = @data_validade_cnh, SalarioBase = @salario_base, Gratificacao = @gratificacao, ID_Cargo = @id_cargo, ID_Cidade = @id_cidade, Logradouro = @logradouro, Numero = @numero, Complemento = @complemento, Bairro = @bairro, CEP = @cep where ID_Funcionarios = @codigo";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oFuncionario, cmd);
+                            cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oFuncionario.Codigo;
+                            if (cmd.ExecuteNonQuery() == 0)
+                            {
+                                throw new InvalidOperationException("Nenhum registro foi atualizado.");
+                            }
+                            codigo = oFuncionario.Codigo;
+                        }
+                    }
+                    tx.Commit();
+                    oFuncionario.Codigo = codigo;
+                    return codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-            else
-            {
-                sql = "update Funcionarios set Matricula = @matricula, Nome = @nome, CPF = @cpf, Idade = @idade, Sexo = @sexo, Numero_Dependentes = @numero_dependentes, Numero_CNH = @numero_cnh, Tipo_CNH = @tipo_cnh, Data_Validade_CNH = @data_validade_cnh, SalarioBase = @salario_base, Gratificacao = @gratificacao, ID_Cargo = @id_cargo, ID_Cidade = @id_cidade, Logradouro = @logradouro, Numero = @numero, Complemento = @complemento, Bairro = @bairro, CEP = @cep where ID_Funcionarios = @codigo";
-            }
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
-            {
-                cmd.Parameters.AddWithValue("@matricula", oFuncionario.Matricula);
-                cmd.Parameters.AddWithValue("@nome", oFuncionario.Nome);
-                cmd.Parameters.AddWithValue("@cpf", oFuncionario.Cpf);
-                cmd.Parameters.AddWithValue("@idade", oFuncionario.Idade);
-                cmd.Parameters.AddWithValue("@sexo", oFuncionario.Sexo);
-                cmd.Parameters.AddWithValue("@numero_dependentes", oFuncionario.NumDep);
-                cmd.Parameters.AddWithValue("@numero_cnh", oFuncionario.Cnh);
-                cmd.Parameters.AddWithValue("@tipo_cnh", oFuncionario.TipoCnh);
-                cmd.Parameters.AddWithValue("@data_validade_cnh", oFuncionario.DataValidadeCnh);
-                cmd.Parameters.AddWithValue("@salario_base", oFuncionario.SalBase);
-                cmd.Parameters.AddWithValue("@gratificacao", oFuncionario.Gratificacao);
-                cmd.Parameters.AddWithValue("@id_cargo", oFuncionario.OCargo.Codigo);
-                cmd.Parameters.AddWithValue("@id_cidade", oFuncionario.OCidade.Codigo);
-                cmd.Parameters.AddWithValue("@logradouro", oFuncionario.Logradouro);
-                cmd.Parameters.AddWithValue("@numero", oFuncionario.Numero);
-                cmd.Parameters.AddWithValue("@complemento", oFuncionario.Complemento);
-                cmd.Parameters.AddWithValue("@bairro", oFuncionario.Bairro);
-                cmd.Parameters.AddWithValue("@cep", oFuncionario.Cep);
-                cmd.Parameters.AddWithValue("@codigo", oFuncionario.Codigo);
-                cmd.ExecuteNonQuery();
-                cmd.CommandText = "Select @@IDENTITY";
-                ok = cmd.ExecuteScalar().ToString();
-            }
-            cnn.Close();
-            return ok;
         }
 
         public override string CarregarObj(object obj)
@@ -69,14 +74,12 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            string sql = "Select F.ID_Funcionarios, F.Nome, F.Idade, F.Sexo, F.Matricula, F.CPF, F.Numero_Dependentes, F.SalarioBase, F.Gratificacao, F.ID_Cargo, C.Cargo from Funcionarios F inner join Cargos C on F.ID_Cargo = C.ID_Cargos";
-
             var lista = new List<object>();
 
-            cnn = Banco.AbrirBD();
-
-            try
+            using (cnn = Banco.AbrirBD())
             {
+                const string sql = "Select F.ID_Funcionarios, F.Nome, F.Idade, F.Sexo, F.Matricula, F.CPF, F.Numero_Dependentes, F.SalarioBase, F.Gratificacao, F.ID_Cargo, C.Cargo from Funcionarios F inner join Cargos C on F.ID_Cargo = C.ID_Cargos";
+
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
@@ -97,31 +100,59 @@ namespace Grafico_2026_Julio_Eidt.DAO
                         lista.Add(oFuncionario);
                     }
                 }
+            }
 
-            }
-            finally
-            {
-                cnn.Close();
-            }
             return lista;
         }
 
         public override string Excluir(object obj)
         {
             Funcionarios oFuncionario = (Funcionarios)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
-
-            sql = "delete Funcionarios where ID_Funcionarios = @codigo";
-
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
             {
-                cmd.Parameters.AddWithValue("@codigo", oFuncionario.Codigo);
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    const string sql = "delete from Funcionarios where ID_Funcionarios = @codigo";
+                    using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                    {
+                        cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oFuncionario.Codigo;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            throw new InvalidOperationException("Nenhum registro foi excluído.");
+                        }
+                    }
+                    tx.Commit();
+                    return oFuncionario.Codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
+        }
 
-            cnn.Close();
-            throw new NotImplementedException();
+        private static void AdiconarParametros(Funcionarios oFuncionario, SqlCommand cmd)
+        {
+            cmd.Parameters.Add("@matricula", SqlDbType.VarChar, 20).Value = oFuncionario.Matricula;
+            cmd.Parameters.Add("@nome", SqlDbType.VarChar, 100).Value = oFuncionario.Nome;
+            cmd.Parameters.Add("@cpf", SqlDbType.VarChar, 14).Value = oFuncionario.Cpf;
+            cmd.Parameters.Add("@idade", SqlDbType.Int).Value = oFuncionario.Idade;
+            cmd.Parameters.Add("@sexo", SqlDbType.Char, 1).Value = oFuncionario.Sexo;
+            cmd.Parameters.Add("@numero_dependentes", SqlDbType.Int).Value = oFuncionario.NumDep;
+            cmd.Parameters.Add("@numero_cnh", SqlDbType.VarChar, 20).Value = oFuncionario.Cnh;
+            cmd.Parameters.Add("@tipo_cnh", SqlDbType.VarChar, 5).Value = oFuncionario.TipoCnh;
+            cmd.Parameters.Add("@data_validade_cnh", SqlDbType.DateTime).Value = oFuncionario.DataValidadeCnh;
+            cmd.Parameters.Add("@salario_base", SqlDbType.Float).Value = oFuncionario.SalBase;
+            cmd.Parameters.Add("@gratificacao", SqlDbType.Float).Value = oFuncionario.Gratificacao;
+            cmd.Parameters.Add("@id_cargo", SqlDbType.Int).Value = oFuncionario.OCargo.Codigo;
+            cmd.Parameters.Add("@id_cidade", SqlDbType.Int).Value = oFuncionario.OCidade.Codigo;
+            cmd.Parameters.Add("@logradouro", SqlDbType.VarChar, 100).Value = oFuncionario.Logradouro;
+            cmd.Parameters.Add("@numero", SqlDbType.VarChar, 10).Value = oFuncionario.Numero;
+            cmd.Parameters.Add("@complemento", SqlDbType.VarChar, 50).Value = oFuncionario.Complemento;
+            cmd.Parameters.Add("@bairro", SqlDbType.VarChar, 50).Value = oFuncionario.Bairro;
+            cmd.Parameters.Add("@cep", SqlDbType.VarChar, 10).Value = oFuncionario.Cep;
         }
     }
 }

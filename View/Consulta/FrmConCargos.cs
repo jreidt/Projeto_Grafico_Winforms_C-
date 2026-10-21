@@ -37,7 +37,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         public override void Pesquisar()
         {
             this.listV.Items.Clear();
-            oCargo.Cargo = txtCodigo.Text.Trim().ToUpper();
             var listaResultado = new List<Cargos>();
             foreach (var cargo in oCtrlCargos.Pesquisar(oCargo))
             {

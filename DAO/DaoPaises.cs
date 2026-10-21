@@ -1,6 +1,7 @@
 ﻿using Grafico_2026_Julio_Eidt.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -18,29 +19,46 @@ namespace Grafico_2026_Julio_Eidt.DAO
         public override string Salvar(object obj)
         {
             Paises oPais = (Paises)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
-            if (oPais.Codigo == 0)
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
             {
-                sql = "insert into Paises(Pais, Sigla, DDI , Moeda) values (@pais, @sigla, @ddi, @moeda)";
+                try
+                {
+                    int codigo;
+
+                    if (oPais.Codigo == 0)
+                    {
+                        const string sql = "insert into Paises(Pais, Sigla, DDI , Moeda) output inserted.ID_Paises values (@pais, @sigla, @ddi, @moeda)";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oPais, cmd);
+                            codigo = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+                    }
+                    else
+                    {
+                        const string sql = "update Paises set Pais = @pais, Sigla = @sigla, DDI = @ddi, Moeda = @moeda where ID_Paises = @codigo";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oPais, cmd);
+                            cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oPais.Codigo;
+                            if (cmd.ExecuteNonQuery() == 0)
+                            {
+                                throw new InvalidOperationException("Nenhum registro foi atualizado.");
+                            }
+                            codigo = oPais.Codigo;
+                        }
+                    }
+                    tx.Commit();
+                    oPais.Codigo = codigo;
+                    return codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-            else
-            {
-                sql = "update Paises set Pais = @pais, Sigla = @sigla, DDI = @ddi, Moeda = @moeda where ID_Paises = @codigo";
-            }
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
-            {
-                cmd.Parameters.AddWithValue("@pais", oPais.Pais);
-                cmd.Parameters.AddWithValue("@sigla", oPais.Sigla);
-                cmd.Parameters.AddWithValue("@ddi", oPais.DDI);
-                cmd.Parameters.AddWithValue("@moeda", oPais.Moeda);
-                cmd.Parameters.AddWithValue("@codigo", oPais.Codigo);
-                cmd.ExecuteNonQuery();
-                cmd.CommandText = "Select @@IDENTITY";
-                ok = cmd.ExecuteScalar().ToString();
-            }
-            cnn.Close();
-            return ok;
         }
 
         public override string CarregarObj(object obj)
@@ -55,14 +73,12 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            string sql = "Select ID_Paises, Pais, Sigla, DDI, Moeda from Paises";
-
             var lista = new List<object>();
 
-            cnn = Banco.AbrirBD();
-
-            try
+            using (cnn = Banco.AbrirBD())
             {
+                const string sql = "Select ID_Paises, Pais, Sigla, DDI, Moeda from Paises";
+
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
@@ -75,32 +91,47 @@ namespace Grafico_2026_Julio_Eidt.DAO
                         oPais.DDI = dr["DDI"].ToString();
                         oPais.Moeda = dr["Moeda"].ToString();
                         lista.Add(oPais);
-                    }        
+                    }
                 }
-                
             }
-            finally
-            {
-                cnn.Close();
-            }
+
             return lista;
         }
 
         public override string Excluir(object obj)
         {
             Paises oPais = (Paises)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
-
-            sql = "delete Paises where ID_Paises = @codigo";
-
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
-            { 
-                cmd.Parameters.AddWithValue("@codigo", oPais.Codigo);
-                cmd.ExecuteNonQuery();
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
+            {
+                try
+                {
+                    const string sql = "delete from Paises where ID_Paises = @codigo";
+                    using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                    {
+                        cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oPais.Codigo;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            throw new InvalidOperationException("Nenhum registro foi excluído.");
+                        }
+                    }
+                    tx.Commit();
+                    return oPais.Codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-            cnn.Close();
-            throw new NotImplementedException();
+        }
+
+        private static void AdiconarParametros(Paises oPais, SqlCommand cmd)
+        {
+            cmd.Parameters.Add("@pais", SqlDbType.VarChar, 50).Value = oPais.Pais;
+            cmd.Parameters.Add("@sigla", SqlDbType.VarChar, 3).Value = oPais.Sigla;
+            cmd.Parameters.Add("@ddi", SqlDbType.VarChar, 5).Value = oPais.DDI;
+            cmd.Parameters.Add("@moeda", SqlDbType.VarChar, 5).Value = oPais.Moeda;
         }
     }
 }

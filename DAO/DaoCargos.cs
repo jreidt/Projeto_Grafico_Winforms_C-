@@ -1,6 +1,7 @@
 ﻿using Grafico_2026_Julio_Eidt.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -13,34 +14,52 @@ namespace Grafico_2026_Julio_Eidt.DAO
         protected SqlConnection cnn;
         public DaoCargos()
         {
-            cnn = Banco.AbrirBD();
+
         }
+
         public override string Salvar(object obj)
         {
             Cargos oCargo = (Cargos)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
+            {
+                try
+                {
+                    int codigo;
 
-            if (oCargo.Codigo == 0)
-            {
-                sql = "insert into Cargos(Cargo, Exige_CNH, Ganha_Comissao) values (@cargo, @exige_cnh, @ganha_comissao)";
+                    if (oCargo.Codigo == 0)
+                    {
+                        const string sql = "insert into Cargos(Cargo, Exige_CNH, Ganha_Comissao) output inserted.ID_Cargos values (@cargo, @exige_cnh, @ganha_comissao)";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oCargo, cmd);
+                            codigo = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+                    }
+                    else
+                    {
+                        const string sql = "update Cargos set Cargo = @cargo, Exige_CNH = @exige_cnh, Ganha_Comissao = @ganha_comissao where ID_Cargos = @codigo";
+                        using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                        {
+                            AdiconarParametros(oCargo, cmd);
+                            cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oCargo.Codigo;
+                            if (cmd.ExecuteNonQuery() == 0)
+                            {
+                                throw new InvalidOperationException("Nenhum registro foi atualizado.");
+                            }
+                            codigo = oCargo.Codigo;
+                        }
+                    }
+                    tx.Commit();
+                    oCargo.Codigo = codigo;
+                    return codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
-            else
-            {
-                sql = "update Cargos set Cargo = @cargo, Exige_CNH = @exige_cnh, Ganha_Comissao = @ganha_comissao where ID_Cargos = @codigo";
-            }
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
-            {
-                cmd.Parameters.AddWithValue("@cargo", oCargo.Cargo);
-                cmd.Parameters.AddWithValue("@exige_cnh", oCargo.ExigeCnh);
-                cmd.Parameters.AddWithValue("@ganha_comissao", oCargo.GanhaComissao);
-                cmd.Parameters.AddWithValue("@codigo", oCargo.Codigo);
-                cmd.ExecuteNonQuery();
-                cmd.CommandText = "Select @@IDENTITY";
-                ok = cmd.ExecuteScalar().ToString();
-            }
-            cnn.Close();
-            return ok;
         }
 
         public override string CarregarObj(object obj)
@@ -55,14 +74,12 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override List<object> Pesquisar(object obj)
         {
-            string sql = "Select ID_Cargos, Cargo, Exige_CNH, Ganha_Comissao from Cargos";
-
             var lista = new List<object>();
 
-            cnn = Banco.AbrirBD();
-
-            try
+            using (cnn = Banco.AbrirBD())
             {
+                const string sql = "Select ID_Cargos, Cargo, Exige_CNH, Ganha_Comissao from Cargos";
+
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
@@ -76,31 +93,44 @@ namespace Grafico_2026_Julio_Eidt.DAO
                         lista.Add(oCargo);
                     }
                 }
+            }
 
-            }
-            finally
-            {
-                cnn.Close();
-            }
             return lista;
         }
 
         public override string Excluir(object obj)
         {
             Cargos oCargo = (Cargos)obj;
-            string ok = string.Empty, sql = string.Empty;
-            cnn = Banco.AbrirBD();
-
-            sql = "delete Cargos where ID_Cargos = @codigo";
-
-            using (SqlCommand cmd = new SqlCommand(sql, cnn))
+            using (cnn = Banco.AbrirBD())
+            using (SqlTransaction tx = cnn.BeginTransaction())
             {
-                cmd.Parameters.AddWithValue("@codigo", oCargo.Codigo);
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    const string sql = "delete from Cargos where ID_Cargos = @codigo";
+                    using (SqlCommand cmd = new SqlCommand(sql, cnn, tx))
+                    {
+                        cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oCargo.Codigo;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            throw new InvalidOperationException("Nenhum registro foi excluído.");
+                        }
+                    }
+                    tx.Commit();
+                    return oCargo.Codigo.ToString();
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
             }
+        }
 
-            cnn.Close();
-            throw new NotImplementedException();
+        private static void AdiconarParametros(Cargos oCargo, SqlCommand cmd)
+        {
+            cmd.Parameters.Add("@cargo", SqlDbType.VarChar, 100).Value = oCargo.Cargo;
+            cmd.Parameters.Add("@exige_cnh", SqlDbType.Bit).Value = oCargo.ExigeCnh;
+            cmd.Parameters.Add("@ganha_comissao", SqlDbType.Bit).Value = oCargo.GanhaComissao;
         }
     }
 }
