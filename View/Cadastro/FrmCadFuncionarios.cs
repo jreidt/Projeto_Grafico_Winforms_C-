@@ -257,7 +257,10 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oFuncionario.TipoCnh            = this.txtTipoCnh.Text[0];
             oFuncionario.SalBase            = Convert.ToDouble(this.txtSalBase.Text);
             oFuncionario.Gratificacao       = Convert.ToDouble(this.txtGratificacao.Text);
-            msg                             = oCtrlFuncionarios.Salvar(oFuncionario);
+            if (btnSalvar.Text == "Sal&var")
+                msg = oCtrlFuncionarios.Salvar(oFuncionario);
+            else
+                msg = oCtrlFuncionarios.Excluir(oFuncionario);
             if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);

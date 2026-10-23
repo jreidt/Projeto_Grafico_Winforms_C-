@@ -78,7 +78,10 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oCargo.Cargo            = txtCargo.Text;
             oCargo.ExigeCnh         = cboxExigeCnh.Checked;
             oCargo.GanhaComissao    = cboxGanhaComissao.Checked;
-            msg                     = oCtrlCargos.Salvar(oCargo);
+            if (btnSalvar.Text == "Sal&var")
+                msg = oCtrlCargos.Salvar(oCargo);
+            else
+                msg = oCtrlCargos.Excluir(oCargo);
             if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);

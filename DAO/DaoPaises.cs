@@ -63,7 +63,33 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override string CarregarObj(object obj)
         {
-            return null;
+            Paises oPais = (Paises)obj;
+
+            const string sql = "Select ID_Paises, Pais, Sigla, DDI, Moeda from Paises WHERE ID_Paises = @codigo";
+            try
+            {
+                using (SqlConnection cnn = Banco.AbrirBD())
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                {
+                    cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oPais.Codigo;
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (!dr.Read())
+                            return "Código de Pais não Encontrado";
+                        oPais.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Paises"));
+                        oPais.Pais = dr.GetString(dr.GetOrdinal("Pais"));
+                        oPais.Sigla = dr.GetString(dr.GetOrdinal("Sigla"));
+                        oPais.DDI = dr.GetString(dr.GetOrdinal("DDI"));
+                        oPais.Moeda = dr.GetString(dr.GetOrdinal("Moeda"));
+                    }
+                }
+                return "";
+            }
+            catch (SqlException ex)
+            {
+                return "Erro de bando de dados" + ex.Message;
+            }
         }
 
         public override List<object> CarregarColecao(object obj)

@@ -109,7 +109,10 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oEstado.UF           = this.txtUf.Text;
             oEstado.OPais.Codigo = Convert.ToInt32(this.txtCodPais.Text);
             oEstado.OPais.Pais   = this.txtPais.Text;
-            msg                  = oCtrlEstados.Salvar(oEstado);
+            if (btnSalvar.Text == "Sal&var")
+                msg = oCtrlEstados.Salvar(oEstado);
+            else
+                msg = oCtrlEstados.Excluir(oEstado);
             if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);

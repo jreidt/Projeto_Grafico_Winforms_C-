@@ -61,10 +61,11 @@
             this.colEstado,
             this.colCodPais,
             this.colPais});
+            this.listV.SelectedIndexChanged += new System.EventHandler(this.listV_SelectedIndexChanged);
             // 
             // txtCodigo
             // 
-            this.txtCodigo.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.txtCodigo.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             // 
             // btnSair
             // 
@@ -107,9 +108,9 @@
             // 
             // FrmConCidades
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.ClientSize = new System.Drawing.Size(1067, 554);
-            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.Name = "FrmConCidades";
             this.Text = "Consulta de Cidades";
             this.ResumeLayout(false);

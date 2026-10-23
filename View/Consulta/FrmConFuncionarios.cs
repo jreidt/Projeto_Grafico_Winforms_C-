@@ -34,33 +34,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadFuncionarios = (FrmCadFuncionarios)obj;
         }
 
-        public override void Pesquisar()
-        {
-            this.listV.Items.Clear();
-            var listaResultado = new List<Funcionarios>();
-            foreach (var funcionario in oCtrlFuncionarios.Pesquisar(oFuncionario))
-            {
-                listaResultado.Add((Funcionarios)funcionario);
-            }
-
-            foreach (Funcionarios oFuncionarioPesq in listaResultado)
-            {
-                ListViewItem item = new ListViewItem(".");
-                item.SubItems.Add(oFuncionarioPesq.Codigo.ToString());
-                item.SubItems.Add(oFuncionarioPesq.Nome);
-                item.SubItems.Add(oFuncionarioPesq.Idade.ToString());
-                item.SubItems.Add(oFuncionarioPesq.Sexo.ToString());
-                item.SubItems.Add(oFuncionarioPesq.Matricula);
-                item.SubItems.Add(oFuncionarioPesq.Cpf);
-                item.SubItems.Add(oFuncionarioPesq.NumDep.ToString());
-                item.SubItems.Add(oFuncionarioPesq.SalBase.ToString("C2"));
-                item.SubItems.Add(oFuncionarioPesq.Gratificacao.ToString("C2"));
-                item.SubItems.Add(oFuncionarioPesq.OCargo.Codigo.ToString());
-                item.SubItems.Add(oFuncionarioPesq.OCargo.Cargo);
-                listV.Items.Add(item);
-            }
-        }
-
         public override void Incluir()
         {
             oFrmCadFuncionarios.ConhecaObj(oFuncionario, oCtrlFuncionarios);
@@ -93,6 +66,35 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             this.Pesquisar();
         }
 
+        public override void Pesquisar()
+        {
+            this.listV.Items.Clear();
+            Funcionarios oFuncionarioFiltro = new Funcionarios();
+            oFuncionarioFiltro.Nome = txtCodigo.Text.Trim();
+            foreach (Funcionarios funcionario in oCtrlFuncionarios.Pesquisar(oFuncionarioFiltro))
+            {
+                AdicionarLinhaLV(funcionario);
+            }
+        }
+
+        private void AdicionarLinhaLV(Funcionarios funcionario)
+        {
+            ListViewItem item = new ListViewItem(".");
+            item.SubItems.Add(funcionario.Codigo.ToString());
+            item.SubItems.Add(funcionario.Nome);
+            item.SubItems.Add(funcionario.Idade.ToString());
+            item.SubItems.Add(funcionario.Sexo.ToString());
+            item.SubItems.Add(funcionario.Matricula);
+            item.SubItems.Add(funcionario.Cpf);
+            item.SubItems.Add(funcionario.NumDep.ToString());
+            item.SubItems.Add(funcionario.SalBase.ToString("C2"));
+            item.SubItems.Add(funcionario.Gratificacao.ToString("C2"));
+            item.SubItems.Add(funcionario.OCargo.Codigo.ToString());
+            item.SubItems.Add(funcionario.OCargo.Cargo);
+            item.Tag = funcionario;
+            listV.Items.Add(item);
+        }
+
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
             Pesquisar();
@@ -118,5 +120,38 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
 
         }
 
+        private void listV_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.listV.SelectedItems.Count > 0)
+            {
+                ListViewItem linha = listV.SelectedItems[0];
+                Funcionarios oFuncionarioSel = (Funcionarios)linha.Tag;
+
+                oFuncionario.Codigo = oFuncionarioSel.Codigo;
+                oFuncionario.Nome = oFuncionarioSel.Nome;
+                oFuncionario.Idade = oFuncionarioSel.Idade;
+                oFuncionario.Sexo = oFuncionarioSel.Sexo;
+                oFuncionario.Matricula = oFuncionarioSel.Matricula;
+                oFuncionario.Cpf = oFuncionarioSel.Cpf;
+                oFuncionario.NumDep = oFuncionarioSel.NumDep;
+                oFuncionario.SalBase = oFuncionarioSel.SalBase;
+                oFuncionario.Gratificacao = oFuncionarioSel.Gratificacao;
+                oFuncionario.OCargo.Codigo = oFuncionarioSel.OCargo.Codigo;
+                oFuncionario.OCargo.Cargo = oFuncionarioSel.OCargo.Cargo;
+
+                // Endereço e Localização (como todo o objeto está na Tag, você já pode carregar tudo)
+                oFuncionario.Logradouro = oFuncionarioSel.Logradouro;
+                oFuncionario.Numero = oFuncionarioSel.Numero;
+                oFuncionario.Complemento = oFuncionarioSel.Complemento;
+                oFuncionario.Bairro = oFuncionarioSel.Bairro;
+                oFuncionario.Cep = oFuncionarioSel.Cep;
+                oFuncionario.OCidade.Codigo = oFuncionarioSel.OCidade.Codigo;
+                oFuncionario.OCidade.Cidade = oFuncionarioSel.OCidade.Cidade;
+                oFuncionario.OCidade.OEstado.Codigo = oFuncionarioSel.OCidade.OEstado.Codigo;
+                oFuncionario.OCidade.OEstado.Estado = oFuncionarioSel.OCidade.OEstado.Estado;
+                oFuncionario.OCidade.OEstado.OPais.Codigo = oFuncionarioSel.OCidade.OEstado.OPais.Codigo;
+                oFuncionario.OCidade.OEstado.OPais.Pais = oFuncionarioSel.OCidade.OEstado.OPais.Pais;
+            }
+        }
     }
 }

@@ -34,26 +34,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadCargos = (FrmCadCargos)obj;
         }
 
-        public override void Pesquisar()
-        {
-            this.listV.Items.Clear();
-            var listaResultado = new List<Cargos>();
-            foreach (var cargo in oCtrlCargos.Pesquisar(oCargo))
-            {
-                listaResultado.Add((Cargos)cargo);
-            }
-
-            foreach (Cargos oCargoPesq in listaResultado)
-            {
-                ListViewItem item = new ListViewItem(".");
-                item.SubItems.Add(oCargoPesq.Codigo.ToString());
-                item.SubItems.Add(oCargoPesq.Cargo);
-                item.SubItems.Add(oCargoPesq.ExigeCnh ? "Sim" : "Não");
-                item.SubItems.Add(oCargoPesq.GanhaComissao ? "Sim" : "Não");
-                listV.Items.Add(item);
-            }
-        }
-
         public override void Incluir()
         {
             oFrmCadCargos.ConhecaObj(oCargo, oCtrlCargos);
@@ -86,6 +66,28 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             this.Pesquisar();
         }
 
+        public override void Pesquisar()
+        {
+            this.listV.Items.Clear();
+            Cargos oCargoFiltro = new Cargos();
+            oCargo.Cargo = txtCodigo.Text.Trim();
+            foreach (Cargos cargo in oCtrlCargos.Pesquisar(oCargoFiltro))
+            {
+                AdicionarLinhaLV(cargo);
+            }
+        }
+
+        private void AdicionarLinhaLV(Cargos cargo)
+        {
+            ListViewItem item = new ListViewItem(".");
+            item.SubItems.Add(cargo.Codigo.ToString());
+            item.SubItems.Add(cargo.Cargo);
+            item.SubItems.Add(cargo.ExigeCnh ? "Sim" : "Não");
+            item.SubItems.Add(cargo.GanhaComissao ? "Sim" : "Não");
+            item.Tag = cargo;
+            listV.Items.Add(item);
+        }
+
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
             Pesquisar();
@@ -109,6 +111,19 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         private void brnSair_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void listV_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.listV.SelectedItems.Count > 0)
+            {
+                ListViewItem linha = listV.SelectedItems[0];
+                Cargos oCargoSel = (Cargos)linha.Tag;
+                oCargo.Codigo = oCargoSel.Codigo;
+                oCargo.Cargo = oCargoSel.Cargo;
+                oCargo.ExigeCnh = oCargoSel.ExigeCnh;
+                oCargo.GanhaComissao = oCargoSel.GanhaComissao;
+            }
         }
     }
 }

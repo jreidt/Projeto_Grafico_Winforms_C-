@@ -73,22 +73,24 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         public override void Pesquisar()
         {
             this.listV.Items.Clear();
-            var listaResultado = new List<Paises>();
-            foreach (var pais in oCtrlPaises.Pesquisar(oPais))
+            Paises oPaisFiltro = new Paises();
+            oPais.Pais = txtCodigo.Text.Trim();
+            foreach (Paises pais in oCtrlPaises.Pesquisar(oPaisFiltro))
             {
-                listaResultado.Add((Paises)pais);
+                AdicionarLinhaLV(pais);
             }
+        }
 
-            foreach (Paises oPaisPesq in listaResultado)
-            {
-                ListViewItem item = new ListViewItem(".");
-                item.SubItems.Add(oPaisPesq.Codigo.ToString());
-                item.SubItems.Add(oPaisPesq.Pais);
-                item.SubItems.Add(oPaisPesq.Sigla);
-                item.SubItems.Add(oPaisPesq.DDI);
-                item.SubItems.Add(oPaisPesq.Moeda);
-                listV.Items.Add(item);
-            }
+        private void AdicionarLinhaLV(Paises pais)
+        {
+            ListViewItem item = new ListViewItem(".");
+            item.SubItems.Add(pais.Codigo.ToString());
+            item.SubItems.Add(pais.Pais);
+            item.SubItems.Add(pais.Sigla);
+            item.SubItems.Add(pais.DDI);
+            item.SubItems.Add(pais.Moeda);
+            item.Tag = pais;
+            listV.Items.Add(item);
         }
 
         private void btnPesquisar_Click(object sender, EventArgs e)
@@ -114,6 +116,20 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         private void brnSair_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void listV_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.listV.SelectedItems.Count > 0)
+            {
+                ListViewItem linha = listV.SelectedItems[0];
+                Paises oPaisSel = (Paises)linha.Tag;
+                oPais.Codigo = oPaisSel.Codigo;
+                oPais.Pais = oPaisSel.Pais;
+                oPais.Sigla = oPaisSel.Sigla;
+                oPais.DDI = oPaisSel.DDI;
+                oPais.Moeda = oPaisSel.Moeda;
+            }
         }
     }
 }

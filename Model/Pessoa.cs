@@ -33,7 +33,7 @@ namespace Grafico_2026_Julio_Eidt.Model
         public string Nome
         {
             get => nome;
-            set => nome = value;
+            set => nome = value.ToUpper();
         }
 
         public int Idade
@@ -45,7 +45,7 @@ namespace Grafico_2026_Julio_Eidt.Model
         public char Sexo
         {
             get => sexo;
-            set => sexo = value;
+            set => sexo = char.ToUpper(value);
         }
 
     }

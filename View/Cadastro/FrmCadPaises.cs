@@ -100,7 +100,10 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oPais.Sigla  = this.txtSigla.Text;
             oPais.DDI    = this.txtDdi.Text;
             oPais.Moeda  = this.txtMoeda.Text;
-            msg          = oCtrlPaises.Salvar(oPais);
+            if (btnSalvar.Text == "Sal&var")
+                msg = oCtrlPaises.Salvar(oPais);
+            else
+                msg = oCtrlPaises.Excluir(oPais);
             if(!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);

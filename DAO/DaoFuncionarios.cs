@@ -64,7 +64,61 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override string CarregarObj(object obj)
         {
-            return null;
+            Funcionarios oFuncionario = (Funcionarios)obj;
+
+            const string sql = @"SELECT F.ID_Funcionarios, F.Nome, F.Idade, F.Sexo, F.Matricula, F.CPF, 
+                F.Numero_Dependentes, F.SalarioBase, F.Gratificacao, 
+                F.ID_Cidade, Cid.Cidade, 
+                E.ID_Estados AS ID_Estado, E.Estado, 
+                P.ID_Paises AS ID_Pais, P.Pais, 
+                F.Logradouro, F.Numero, F.Complemento, F.Bairro, F.CEP, 
+                F.ID_Cargo, C.Cargo 
+                FROM Funcionarios F 
+                INNER JOIN Cargos C ON F.ID_Cargo = C.ID_Cargos 
+                INNER JOIN Cidades Cid ON F.ID_Cidade = Cid.ID_Cidades 
+                INNER JOIN Estados E ON Cid.ID_Estado = E.ID_Estados 
+                INNER JOIN Paises P ON E.ID_Pais = P.ID_Paises";
+            try
+            {
+                using (SqlConnection cnn = Banco.AbrirBD())
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                {
+                    cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oFuncionario.Codigo;
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (!dr.Read())
+                            return "Código de Cidade não Encontrado";
+                        oFuncionario.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Funcionarios"));
+                        oFuncionario.Nome = dr.GetString(dr.GetOrdinal("Nome"));
+                        oFuncionario.Idade = dr.GetInt32(dr.GetOrdinal("Idade"));
+                        oFuncionario.Sexo = dr.GetChar(dr.GetOrdinal("Sexo"));
+                        oFuncionario.Matricula = dr.GetString(dr.GetOrdinal("Matricula"));
+                        oFuncionario.Cpf = dr.GetString(dr.GetOrdinal("CPF"));
+                        oFuncionario.NumDep = dr.GetInt32(dr.GetOrdinal("Numero_Dependentes"));
+                        oFuncionario.SalBase = dr.GetDouble(dr.GetOrdinal("SalarioBase"));
+                        oFuncionario.Gratificacao = dr.GetDouble(dr.GetOrdinal("Gratificacao"));
+                        oFuncionario.OCargo.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Cargo"));
+                        oFuncionario.OCargo.Cargo = dr.GetString(dr.GetOrdinal("Cargo"));
+                        oFuncionario.OCidade.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Cidade"));
+                        oFuncionario.OCidade.Cidade = dr.GetString(dr.GetOrdinal("Cidade"));
+                        oFuncionario.Logradouro = dr.GetString(dr.GetOrdinal("Logradouro"));
+                        oFuncionario.Numero = dr.GetInt32(dr.GetOrdinal("Numero"));
+                        oFuncionario.Complemento = dr.GetString(dr.GetOrdinal("Complemento"));
+                        oFuncionario.Bairro = dr.GetString(dr.GetOrdinal("Bairro"));
+                        oFuncionario.Cep = dr.GetString(dr.GetOrdinal("CEP"));
+                        oFuncionario.OCidade.OEstado.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Estado"));
+                        oFuncionario.OCidade.OEstado.Estado = dr.GetString(dr.GetOrdinal("Estado"));
+                        oFuncionario.OCidade.OEstado.OPais.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Pais"));
+                        oFuncionario.OCidade.OEstado.OPais.Pais = dr.GetString(dr.GetOrdinal("Pais"));
+                    }
+                }
+                return "";
+            }
+            catch (SqlException ex)
+            {
+                return "Erro de bando de dados" + ex.Message;
+            }
         }
 
         public override List<object> CarregarColecao(object obj)
@@ -78,7 +132,18 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
             using (cnn = Banco.AbrirBD())
             {
-                const string sql = "Select F.ID_Funcionarios, F.Nome, F.Idade, F.Sexo, F.Matricula, F.CPF, F.Numero_Dependentes, F.SalarioBase, F.Gratificacao, F.ID_Cargo, C.Cargo from Funcionarios F inner join Cargos C on F.ID_Cargo = C.ID_Cargos";
+                const string sql = @"SELECT F.ID_Funcionarios, F.Nome, F.Idade, F.Sexo, F.Matricula, F.CPF, 
+                F.Numero_Dependentes, F.SalarioBase, F.Gratificacao, 
+                F.ID_Cidade, Cid.Cidade, 
+                E.ID_Estados AS ID_Estado, E.Estado, 
+                P.ID_Paises AS ID_Pais, P.Pais, 
+                F.Logradouro, F.Numero, F.Complemento, F.Bairro, F.CEP, 
+                F.ID_Cargo, C.Cargo 
+                FROM Funcionarios F 
+                INNER JOIN Cargos C ON F.ID_Cargo = C.ID_Cargos 
+                INNER JOIN Cidades Cid ON F.ID_Cidade = Cid.ID_Cidades 
+                INNER JOIN Estados E ON Cid.ID_Estado = E.ID_Estados 
+                INNER JOIN Paises P ON E.ID_Pais = P.ID_Paises";
 
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 using (SqlDataReader dr = cmd.ExecuteReader())
@@ -97,6 +162,17 @@ namespace Grafico_2026_Julio_Eidt.DAO
                         oFuncionario.Gratificacao = Convert.ToDouble(dr["Gratificacao"]);
                         oFuncionario.OCargo.Codigo = Convert.ToInt32(dr["ID_Cargo"]);
                         oFuncionario.OCargo.Cargo = dr["Cargo"].ToString();
+                        oFuncionario.OCidade.Codigo = Convert.ToInt32(dr["ID_Cidade"]);
+                        oFuncionario.OCidade.Cidade = dr["Cidade"].ToString();
+                        oFuncionario.Logradouro = dr["Logradouro"].ToString();
+                        oFuncionario.Numero = Convert.ToInt32(dr["Numero"]);
+                        oFuncionario.Complemento = dr["Complemento"].ToString();
+                        oFuncionario.Bairro = dr["Bairro"].ToString();
+                        oFuncionario.Cep = dr["CEP"].ToString();
+                        oFuncionario.OCidade.OEstado.Codigo = Convert.ToInt32(dr["ID_Estado"]);
+                        oFuncionario.OCidade.OEstado.Estado = dr["Estado"].ToString();
+                        oFuncionario.OCidade.OEstado.OPais.Codigo = Convert.ToInt32(dr["ID_Pais"]);
+                        oFuncionario.OCidade.OEstado.OPais.Pais = dr["Pais"].ToString();
                         lista.Add(oFuncionario);
                     }
                 }

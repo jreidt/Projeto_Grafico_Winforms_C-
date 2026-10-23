@@ -57,6 +57,7 @@
             this.colSigla,
             this.colDdi,
             this.colMoeda});
+            this.listV.SelectedIndexChanged += new System.EventHandler(this.listV_SelectedIndexChanged);
             // 
             // txtCodigo
             // 

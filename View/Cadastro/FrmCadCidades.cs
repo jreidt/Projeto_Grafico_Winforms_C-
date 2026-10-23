@@ -111,7 +111,10 @@ namespace Grafico_2026_Julio_Eidt.View.Cadastro
             oCidade.DDD             = this.txtDdd.Text;
             oCidade.OEstado.Codigo  = Convert.ToInt32(this.txtCodEstado.Text);
             oCidade.OEstado.Estado  = this.txtEstado.Text;
-            msg                     = oCtrlCidades.Salvar(oCidade);
+            if (btnSalvar.Text == "Sal&var")
+                msg = oCtrlCidades.Salvar(oCidade);
+            else
+                msg = oCtrlCidades.Excluir(oCidade);
             if (!string.IsNullOrEmpty(msg))
             {
                 MessageBox.Show(msg);

@@ -64,7 +64,35 @@ namespace Grafico_2026_Julio_Eidt.DAO
 
         public override string CarregarObj(object obj)
         {
-            return null;
+            Cidades oCidade = (Cidades)obj;
+
+            const string sql = "Select C.ID_Cidades, C.Cidade, C.DDD, C.ID_Estado, E.Estado, E.ID_Pais, P.Pais from Cidades C inner join Estados E on C.ID_Estado = E.ID_Estados inner join Paises P on E.ID_Pais = P.ID_Paises Where ID_Cidades = @codigo";
+            try
+            {
+                using (SqlConnection cnn = Banco.AbrirBD())
+                using (SqlCommand cmd = new SqlCommand(sql, cnn))
+                {
+                    cmd.Parameters.Add("@codigo", SqlDbType.Int).Value = oCidade.Codigo;
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (!dr.Read())
+                            return "Código de Cidade não Encontrado";
+                        oCidade.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Cidades"));
+                        oCidade.Cidade = dr.GetString(dr.GetOrdinal("Cidade"));
+                        oCidade.DDD = dr.GetString(dr.GetOrdinal("DDD"));
+                        oCidade.OEstado.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Estado"));
+                        oCidade.OEstado.Estado = dr.GetString(dr.GetOrdinal("Estado"));
+                        oCidade.OEstado.OPais.Codigo = dr.GetInt32(dr.GetOrdinal("ID_Paise"));
+                        oCidade.OEstado.OPais.Pais = dr.GetString(dr.GetOrdinal("Pais"));
+                    }
+                }
+                return "";
+            }
+            catch (SqlException ex)
+            {
+                return "Erro de bando de dados" + ex.Message;
+            }
         }
 
         public override List<object> CarregarColecao(object obj)

@@ -33,27 +33,6 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadEstados = (FrmCadEstados)obj;
         }
 
-        public override void Pesquisar()
-        {
-            this.listV.Items.Clear();
-            var listaResultado = new List<Estados>();
-            foreach (var estado in oCtrlEstados.Pesquisar(oEstado))
-            {
-                listaResultado.Add((Estados)estado);
-            }
-
-            foreach (Estados oEstadoPesq in listaResultado)
-            {
-                ListViewItem item = new ListViewItem(".");
-                item.SubItems.Add(oEstadoPesq.Codigo.ToString());
-                item.SubItems.Add(oEstadoPesq.Estado);
-                item.SubItems.Add(oEstadoPesq.UF);
-                item.SubItems.Add(oEstadoPesq.OPais.Codigo.ToString());
-                item.SubItems.Add(oEstadoPesq.OPais.Pais);
-                listV.Items.Add(item);
-            }
-        }
-
         public override void Incluir()
         {
             oFrmCadEstados.ConhecaObj(oEstado, oCtrlEstados);
@@ -85,6 +64,30 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
             oFrmCadEstados.btnSalvar.Text = aux;
             this.Pesquisar();
         }
+
+        public override void Pesquisar()
+        {
+            this.listV.Items.Clear();
+            Estados oEstadoFiltro = new Estados();
+            oEstadoFiltro.Estado = txtCodigo.Text.Trim();
+            foreach (Estados estado in oCtrlEstados.Pesquisar(oEstadoFiltro))
+            {
+                AdicionarLinhaLV(estado);
+            }
+        }
+
+        private void AdicionarLinhaLV(Estados estado)
+        {
+            ListViewItem item = new ListViewItem(".");
+            item.SubItems.Add(estado.Codigo.ToString());
+            item.SubItems.Add(estado.Estado);
+            item.SubItems.Add(estado.UF);
+            item.SubItems.Add(estado.OPais.Codigo.ToString());
+            item.SubItems.Add(estado.OPais.Pais);
+            item.Tag = estado;
+            listV.Items.Add(item);
+        }
+
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
             Pesquisar();
@@ -108,6 +111,20 @@ namespace Grafico_2026_Julio_Eidt.View.Consulta
         private void brnSair_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void listV_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.listV.SelectedItems.Count > 0)
+            {
+                ListViewItem linha = listV.SelectedItems[0];
+                Estados oEstadoSel = (Estados)linha.Tag;
+                oEstado.Codigo = oEstadoSel.Codigo;
+                oEstado.Estado = oEstadoSel.Estado;
+                oEstado.UF = oEstadoSel.UF;
+                oEstado.OPais.Codigo = oEstadoSel.OPais.Codigo;
+                oEstado.OPais.Pais = oEstadoSel.OPais.Pais;
+            }
         }
     }
 }
